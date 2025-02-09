@@ -16,4 +16,4 @@ SELECT name
 FROM users;
 
 -- name: ResetUsers :exec
-TRUNCATE feeds, users;
+TRUNCATE feed_follows, feeds, users;

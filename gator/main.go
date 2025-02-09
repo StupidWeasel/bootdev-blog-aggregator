@@ -36,8 +36,10 @@ func main(){
 	appCommands.register("reset", handlerReset)
 	appCommands.register("users", handlerListUsers)
 	appCommands.register("agg", handlerAgg)
-	appCommands.register("addfeed", handlerAddFeed)
+	appCommands.register("addfeed", middlewareRequireLogin(handlerAddFeed))
 	appCommands.register("feeds", handlerListFeeds)
+	appCommands.register("follow", middlewareRequireLogin(handlerFollow))
+	appCommands.register("following", middlewareRequireLogin(handlerListFeedFollow))
 
 	theseArgs := os.Args[1:]
 

@@ -80,3 +80,36 @@ func getFeeds(s *state) ([]database.GetFeedsRow, error){
     }
     return results, nil
 }
+
+func addFeedFollow(s *state, user uuid.UUID, feedID int32) (database.CreateFeedFollowRow, error){
+
+    params := database.CreateFeedFollowParams{
+        UserID: user,
+        FeedID: feedID,
+    }
+     
+    result, err := s.db.CreateFeedFollow(context.Background(),params)
+    if err != nil {
+        return database.CreateFeedFollowRow{}, err
+    }
+
+    return result, nil
+}
+
+func getUserFeedFollow(s *state, user uuid.UUID) ([]database.GetFeedFollowsRow, error){
+
+    results, err := s.db.GetFeedFollows(context.Background(), user)
+    if err != nil{
+        return nil, fmt.Errorf("Failed to get user feeds: %w", err)
+    }
+    return results, nil
+}
+
+func getFeed(s *state, url string) (database.GetFeedRow, error){
+
+    result, err := s.db.GetFeed(context.Background(), url)
+    if err != nil{
+        return database.GetFeedRow{}, fmt.Errorf("Failed to get feed: %w", err)
+    }
+    return result, nil
+}

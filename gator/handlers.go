@@ -12,6 +12,16 @@ import(
 	"github.com/google/uuid"
 )
 
+func middlewareRequireLogin(handler func(s *state, cmd command, user uuid.UUID) error) func(*state, command) error {
+    return func(s *state, cmd command) error {
+    	thisUserID := s.config.CurrentUserID
+    	if s.config.CurrentUserName == "" || thisUserID == (uuid.UUID{}){
+			return errors.New("You must be logged in to use this command")
+		}
+        return handler(s, cmd, thisUserID)
+    }
+}
+
 func handlerLogin(s *state, cmd command) error{
 	if len(cmd.args) != 1{
 		return fmt.Errorf("usage: %s", color.CyanString("login {username}"))
@@ -99,7 +109,7 @@ func handlerAgg(s *state, cmd command) error{
 
 }
 
-func handlerAddFeed(s *state, cmd command) error{
+func handlerAddFeed(s *state, cmd command, userID uuid.UUID) error{
 
 	if len(cmd.args) != 2{
 		return errors.New("usage: addfeed {feed_name} {feed_url}")
@@ -112,19 +122,14 @@ func handlerAddFeed(s *state, cmd command) error{
 	if !(parsedUrl.Scheme == "http" || parsedUrl.Scheme == "https" || parsedUrl.Scheme == "rss"){
 		return fmt.Errorf("Invalid scheme '%s', must be http(s) or rss", parsedUrl.Scheme)
 	}
-	thisUser := s.config.CurrentUserName
-	thisUserID := s.config.CurrentUserID
-	
-	if thisUser == ""{
-		return errors.New("You must be logged in to use this command")
-	}
-
-	if thisUserID == (uuid.UUID{}){
-		return errors.New("UUID not set!")
-	}
-	result, err := addFeed(context.Background(),s, cmd.args[0], cmd.args[1], thisUserID)
+	result, err := addFeed(context.Background(),s, cmd.args[0], cmd.args[1], userID)
 	if err != nil{
 		return fmt.Errorf("Unable to add feed: %w", err)	
+	}
+
+	_, err = addFeedFollow(s, userID,  result.ID)
+	if err != nil{
+		return fmt.Errorf("Added feed, but unable to follow: %w", err)	
 	}
 
 	fmt.Printf("%+v\n", result)
@@ -147,6 +152,46 @@ func handlerListFeeds(s *state, cmd command) error{
 	}
 	for _,feed := range feeds{
 		fmt.Printf("%s (%s) [User: %s]\n", feed.Name, feed.Url, feed.Username)
+	}
+	return nil
+}
+
+func handlerFollow(s *state, cmd command, userID uuid.UUID) error{
+
+	if len(cmd.args) != 1{
+		return errors.New("usage: follow {url}")
+	}
+	
+	feed, err := getFeed(s, strings.ToLower(cmd.args[0]))
+	if err != nil {
+		return fmt.Errorf("Unable to get a feed for that url, use the add command?")
+	}
+
+    result, err := addFeedFollow(s, userID, feed.ID)
+	if err != nil {
+		return fmt.Errorf("Unable to follow feed: %w.", err)
+	}
+
+	fmt.Printf("You are now following %s, %s!", result.UserName, result.FeedName)
+	return nil
+}
+
+func handlerListFeedFollow(s *state, cmd command, userID uuid.UUID) error{
+
+	if len(cmd.args) != 0{
+		return errors.New("Unexpected arguments, usage: following")
+	}
+
+	feeds, err := getUserFeedFollow(s, userID)
+	if err != nil {
+		return fmt.Errorf("Unable to get followed feeds: %w.", err)
+	}
+	if len(feeds)==0{
+		return errors.New("No followed feeds to list!")
+	}
+	fmt.Println("You are following:")
+	for _,feed := range feeds{
+		fmt.Printf("%s (%s)\n", feed.FeedName, feed.Url)
 	}
 	return nil
 }

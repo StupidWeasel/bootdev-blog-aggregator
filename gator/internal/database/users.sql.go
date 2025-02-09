@@ -77,7 +77,7 @@ func (q *Queries) GetUsers(ctx context.Context) ([]string, error) {
 }
 
 const resetUsers = `-- name: ResetUsers :exec
-TRUNCATE feeds, users
+TRUNCATE feed_follows, feeds, users
 `
 
 func (q *Queries) ResetUsers(ctx context.Context) error {
