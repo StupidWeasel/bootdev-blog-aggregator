@@ -40,6 +40,7 @@ func main(){
 	appCommands.register("feeds", handlerListFeeds)
 	appCommands.register("follow", middlewareRequireLogin(handlerFollow))
 	appCommands.register("following", middlewareRequireLogin(handlerListFeedFollow))
+	appCommands.register("unfollow", middlewareRequireLogin(handlerRemoveFeedFollow))
 
 	theseArgs := os.Args[1:]
 

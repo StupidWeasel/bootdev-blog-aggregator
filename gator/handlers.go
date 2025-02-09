@@ -187,11 +187,27 @@ func handlerListFeedFollow(s *state, cmd command, userID uuid.UUID) error{
 		return fmt.Errorf("Unable to get followed feeds: %w.", err)
 	}
 	if len(feeds)==0{
-		return errors.New("No followed feeds to list!")
+		fmt.Println("No followed feeds to list!")
+		return nil
 	}
 	fmt.Println("You are following:")
 	for _,feed := range feeds{
 		fmt.Printf("%s (%s)\n", feed.FeedName, feed.Url)
 	}
 	return nil
+}
+
+func handlerRemoveFeedFollow(s *state, cmd command, userID uuid.UUID) error{
+
+	if len(cmd.args) != 1{
+		return errors.New("usage: unfollow {url}")
+	}
+
+	err := removeFeedFollow(s, userID, strings.ToLower(cmd.args[0]))
+	if err != nil{
+		return err
+	}
+	fmt.Println("Feed unfollowed.")
+	return nil
+
 }

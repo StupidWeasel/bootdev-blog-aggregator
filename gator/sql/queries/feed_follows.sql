@@ -14,3 +14,7 @@ FROM feed_follows ff
 JOIN users as u ON u.id = ff.user_id
 JOIN feeds as f ON f.id = ff.feed_id
 WHERE ff.user_id = $1;
+
+-- name: UnFeedFollow :execrows
+DELETE FROM feed_follows
+WHERE feed_id = (SELECT id FROM feeds WHERE url = $1) AND feed_follows.user_id = $2;

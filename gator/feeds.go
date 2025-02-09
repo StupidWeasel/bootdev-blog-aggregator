@@ -1,6 +1,7 @@
 package main
 
 import(
+    "errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -112,4 +113,20 @@ func getFeed(s *state, url string) (database.GetFeedRow, error){
         return database.GetFeedRow{}, fmt.Errorf("Failed to get feed: %w", err)
     }
     return result, nil
+}
+
+func removeFeedFollow(s *state, user uuid.UUID, url string) error{
+
+    params := database.UnFeedFollowParams{
+        Url: url,
+        UserID: user,
+    }
+    numRows, err := s.db.UnFeedFollow(context.Background(), params)
+    if err != nil{
+        return fmt.Errorf("Failed to delete feed follow: %w", err)
+    }
+    if numRows==0{
+        return errors.New("No followed feed found, check the url")
+    }
+    return nil
 }
