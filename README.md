@@ -13,12 +13,12 @@ Requires [postgres (PostgreSQL) 17.2](https://www.postgresql.org/docs/current/tu
 #### Installation / building
  - Grab this repo either via [git clone](https://git-scm.com/docs/git-clone) (recommended) or via [automatically generated zip](https://github.com/StupidWeasel/bootdev-blog-aggregator/archive/refs/heads/main.zip).
  - Create a [new postgres database with psql](https://www.postgresql.org/docs/current/app-psql.html):
-
-    sudo -u postgres psql
-    CREATE DATABASE db_name_here;
-    \c db_name_here
-    ALTER USER desired_user PASSWORD 'a_nice_long_password_string';
-
+```
+sudo -u postgres psql
+CREATE DATABASE db_name_here;
+\c db_name_here
+ALTER USER desired_user PASSWORD 'a_nice_long_password_string';
+```
 
  - Create a ~/.gatorconfig.json ***in your homedir,*** an example can be found in the root directory of the project, but it only needs to be the following to start with:
 
