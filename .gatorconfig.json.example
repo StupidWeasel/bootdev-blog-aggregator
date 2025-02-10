@@ -1,0 +1,4 @@
+{
+  "config_file": ".gatorconfig.json",
+  "db_url": "postgres://deired_user:a_nice_long_password_string@localhost:5432/db_name_here?sslmode=disable",
+ }
