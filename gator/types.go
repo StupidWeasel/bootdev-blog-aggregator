@@ -1,13 +1,15 @@
 package main
 
 import(
-	"github.com/StupidWeasel/bootdev-blog-aggregator/gator/internal/config"
-	"github.com/StupidWeasel/bootdev-blog-aggregator/gator/internal/database"
+    "github.com/StupidWeasel/bootdev-blog-aggregator/gator/internal/config"
+    "github.com/StupidWeasel/bootdev-blog-aggregator/gator/internal/database"
+    "context"
 )
 
 type state struct {
-	config *config.Config
-	db *database.Queries
+    config *config.Config
+    db *database.Queries
+    context context.Context
 }
 
 type command struct {
@@ -16,27 +18,32 @@ type command struct {
 }
 
 type commands struct{
-	handlers map[string]func(*state, command) error 
+    handlers map[string]func(*state, command) error 
 }
 
 type RSSFeed struct {
-	Channel struct {
-		Title       string    `xml:"title"`
-		Link        string    `xml:"link"`
-		Description string    `xml:"description"`
-		Item        []RSSItem `xml:"item"`
-	} `xml:"channel"`
+    Channel struct {
+        Title       string    `xml:"title"`
+        Link        string    `xml:"link"`
+        Description string    `xml:"description"`
+        Item        []RSSItem `xml:"item"`
+    } `xml:"channel"`
 }
 
 type RSSItem struct {
-	Title       string `xml:"title"`
-	Link        string `xml:"link"`
-	Description string `xml:"description"`
-	PubDate     string `xml:"pubDate"`
+    Title       string `xml:"title"`
+    Link        string `xml:"link"`
+    Description string `xml:"description"`
+    PubDate     string `xml:"pubDate"`
 }
 
 type ListedFeed struct{
-	Name	string
-	URL		string
-	User	string
+    Name    string
+    URL     string
+    User    string
+}
+
+type ScrapedFeed struct{
+    FeedID  int32
+    Feed    *RSSFeed
 }
