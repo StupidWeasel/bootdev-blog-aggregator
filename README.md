@@ -21,12 +21,12 @@ ALTER USER desired_user PASSWORD 'a_nice_long_password_string';
 ```
 
  - Create a ~/.gatorconfig.json ***in your homedir,*** an example can be found in the root directory of the project, but it only needs to be the following to start with:
-
-     {
-      "config_file": ".gatorconfig.json",
-      "db_url": "postgres://deired_user:a_nice_long_password_string@localhost:5432/db_name_here?sslmode=disable",
-     }
-
+```
+{
+    "config_file": ".gatorconfig.json",
+    "db_url": "postgres://deired_user:a_nice_long_password_string@localhost:5432/db_name_here?sslmode=disable",
+}
+```
  - Navigate to `root_of_project/gator/sql/` (ideally in the terminal) & run  `./goose.sh up` to setup the database, it should say something along the lines of `goose: no migrations to run. current version: 5` when done.
  - In `root_of_project/gator/` run either `go build` to create an executable within the directory or run `go install` to install it in your `$GOPATH/bin` directory. Either way `gator` will be created!
  
