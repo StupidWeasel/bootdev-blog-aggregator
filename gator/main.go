@@ -1,21 +1,22 @@
 package main
 
-import(
-    "database/sql"
-    "fmt"
-    "log"
-    "os"
-    "context"
-    "os/signal"
-    "syscall"
-    _ "github.com/lib/pq"
-    "github.com/StupidWeasel/bootdev-blog-aggregator/gator/internal/config"
-    "github.com/StupidWeasel/bootdev-blog-aggregator/gator/internal/database"
+import (
+	"context"
+	"database/sql"
+	"fmt"
+	"log"
+	"os"
+	"os/signal"
+	"syscall"
+
+	"github.com/StupidWeasel/bootdev-blog-aggregator/gator/internal/config"
+	"github.com/StupidWeasel/bootdev-blog-aggregator/gator/internal/database"
+	_ "github.com/lib/pq"
 )
 func main(){
 
     ctx, cancel := context.WithCancel(context.Background())
-    defer cancel()    
+    defer cancel()
     goodbye := func(){
         fmt.Println("Goodbye!")
         cancel()
@@ -29,15 +30,15 @@ func main(){
     }()
 
     appState := state{
-        config : &config.Config{ 
+        config : &config.Config{
                     ConfigFile : ".gatorconfig.json",
                 },
         context: ctx,
     }
-    
+
     err := appState.config.ReadConfig()
     if err != nil{
-        log.Fatalf("Unable to read config: %w", err)
+        log.Fatalf("Unable to read config: %s", err)
     }
 
 
